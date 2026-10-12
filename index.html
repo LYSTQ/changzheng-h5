@@ -109,7 +109,7 @@
 </head>
 <body>
 
-<audio id="bgm" src="./bgm.wav" loop preload="auto"></audio>
+<audio id="bgm" src="./bgm.mp3" loop preload="auto"></audio>
 <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="背景音乐"><span class="disc">♪</span></button>
 
 <div class="pages" id="pages">
@@ -242,13 +242,31 @@
   var pages = document.getElementById('pages');
   var dots = document.getElementById('dots');
 
-  // 背景音乐播放器
+  // 背景音乐播放器（mp3，兼容手机 / 微信内置浏览器）
   var bgm = document.getElementById('bgm');
   var musicBtn = document.getElementById('musicBtn');
-  function toggleMusic(){
-    if (bgm.paused){ bgm.play().catch(function(){}); musicBtn.classList.add('playing'); }
-    else { bgm.pause(); musicBtn.classList.remove('playing'); }
+  var musicOn = false;     // 是否正在播放
+  var userMuted = false;   // 用户手动关闭后，不再自动恢复播放
+  function startMusic(){
+    if (userMuted) return;
+    bgm.play().then(function(){
+      musicOn = true;
+      musicBtn.classList.add('playing');
+    }).catch(function(){});
   }
+  function stopMusic(){
+    musicOn = false;
+    userMuted = true;
+    musicBtn.classList.remove('playing');
+    bgm.pause();
+  }
+  function toggleMusic(){
+    if (musicOn){ stopMusic(); }
+    else { userMuted = false; startMusic(); }
+  }
+  // 手机浏览器禁止自动播放：首次触摸/点击页面任意处即自动开始播放背景音乐
+  document.addEventListener('touchstart', function(e){ if (!musicBtn.contains(e.target)) startMusic(); }, { passive:true });
+  document.addEventListener('click', function(e){ if (!musicBtn.contains(e.target)) startMusic(); });
   for (var i = 0; i < total; i++) dots.innerHTML += '<span></span>';
 
   function go(n){
