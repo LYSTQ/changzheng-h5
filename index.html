@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<!-- 移动端适配：宽度=设备宽度，禁止缩放 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>长征万里铭初心 · 纪念中国工农红军长征胜利90周年</title>
+<style>
+  /* ============ 全局：红色主题 ============ */
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; overflow:hidden; }
+  body { font-family:"STKaiti","KaiTi","Microsoft YaHei",serif; background:#1a0d05; }
+
+  .pages { width:100%; height:100%; transition:transform .75s cubic-bezier(.25,.8,.25,1); }
+  .page {
+    width:100%; height:100%; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; padding:46px 26px 70px;
+  }
+
+  /* 每页背景：红→深红渐变 + 米黄文字，形成节奏 */
+  .p1{background:radial-gradient(circle at 50% 30%,#b00,#5c0000 70%);color:#ffe9c4;}
+  .p2{background:linear-gradient(165deg,#6d1b1b,#2b0d0d);color:#f3e0c2;}
+  .p3{background:linear-gradient(165deg,#4a1616,#1f0a0a);color:#f5e7cd;}
+  .p4{background:linear-gradient(165deg,#6d1b1b,#2b0d0d);color:#f3e0c2;}
+  .p5{background:linear-gradient(165deg,#4a1616,#1f0a0a);color:#f5e7cd;}
+  .p6{background:linear-gradient(165deg,#6d1b1b,#2b0d0d);color:#f3e0c2;}
+  .p7{background:linear-gradient(165deg,#4a1616,#1f0a0a);color:#f5e7cd;}
+  .p8{background:linear-gradient(165deg,#6d1b1b,#2b0d0d);color:#f3e0c2;}
+  .p9{background:radial-gradient(circle at 50% 30%,#b00,#3a0000 72%);color:#ffe9c4;}
+
+  h1{font-size:30px;margin-bottom:12px;letter-spacing:3px;line-height:1.5;}
+  h2{font-size:26px;margin-bottom:16px;color:#ffd700;letter-spacing:2px;}
+  h3{font-size:20px;margin-bottom:10px;color:#ffd700;}
+  p{font-size:16px;line-height:1.9;margin-bottom:10px;}
+
+  .tag{color:#ffd700;font-size:15px;letter-spacing:5px;margin-bottom:10px;}
+  .starSvg{width:52px;height:52px;margin-bottom:14px;fill:#ffd700;display:block;}
+  .divider{width:120px;height:3px;background:linear-gradient(90deg,transparent,#ffd700,transparent);margin:8px auto 18px;border-radius:3px;}
+
+  /* 首页大标题装饰红绸 */
+  .banner{position:absolute;top:0;left:0;right:0;height:90px;background:linear-gradient(180deg,rgba(255,215,0,.25),transparent);}
+  .banner::after{content:"★ ★ ★";position:absolute;bottom:6px;width:100%;text-align:center;color:#ffd700;letter-spacing:18px;font-size:14px;}
+
+  /* 按钮 */
+  .btn{
+    margin-top:26px;padding:14px 46px;border:2px solid #ffd700;color:#ffd700;
+    font-size:18px;letter-spacing:5px;background:transparent;border-radius:40px;
+    cursor:pointer;font-family:inherit;
+  }
+  .btn:active{background:#ffd700;color:#5c0000;}
+
+  /* 时间轴 */
+  .timeline{text-align:left;width:100%;max-width:400px;}
+  .tl-item{margin-bottom:13px;padding-left:20px;border-left:2px solid #ffd700;position:relative;}
+  .tl-item::before{content:"★";position:absolute;left:-8px;top:2px;color:#ffd700;font-size:13px;}
+  .tl-year{color:#ffd700;font-weight:bold;font-size:17px;}
+  .tl-text{font-size:14px;line-height:1.7;color:#f3e0c2;}
+
+  /* 精神要点卡片 */
+  .spirit{width:100%;max-width:400px;}
+  .sp-item{border:1px solid rgba(255,215,0,.4);border-radius:12px;padding:12px 14px;margin-bottom:12px;background:rgba(0,0,0,.15);}
+  .sp-item b{color:#ffd700;font-size:16px;}
+
+  /* 问答 */
+  .q-options button{
+    display:block;width:100%;margin:9px auto;padding:12px;border:1px solid #ffd700;
+    color:#ffe9c4;background:transparent;font-size:15px;border-radius:10px;cursor:pointer;font-family:inherit;
+  }
+  .q-options button:active{background:#ffd700;color:#5c0000;}
+  .q-msg{margin-top:12px;min-height:20px;font-size:14px;color:#ffd700;}
+  .q-ok{background:#ffd700!important;color:#5c0000!important;}
+  .q-no{background:rgba(255,255,255,.12)!important;}
+
+  /* 诗词 */
+  .poem{font-size:17px;line-height:2.1;color:#f5e7cd;letter-spacing:2px;}
+  .poem em{font-style:normal;color:#ffd700;}
+
+  /* 上下翻页 */
+  .nav{position:fixed;right:14px;bottom:24px;z-index:9;display:flex;flex-direction:column;gap:8px;}
+  .nav button{width:40px;height:40px;border-radius:50%;border:1px solid #ffd700;color:#ffd700;background:rgba(0,0,0,.35);font-size:18px;cursor:pointer;font-family:inherit;}
+  .nav button:disabled{opacity:.3;cursor:default;}
+
+  /* 底部圆点 */
+  .dots{position:fixed;left:50%;transform:translateX(-50%);bottom:34px;z-index:9;display:flex;gap:8px;}
+  .dots span{width:8px;height:8px;border-radius:50%;background:#ffd700;opacity:.3;}
+  .dots span.active{opacity:1;transform:scale(1.3);}
+
+  /* 底部版权栏 */
+  .foot{position:fixed;left:0;right:0;bottom:0;z-index:8;text-align:center;font-size:11px;color:rgba(255,233,196,.5);padding-bottom:4px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.4));}
+
+  /* 配图卡片 + AI生成标注 */
+  .img-card{width:80%;height:36vh;object-fit:cover;border-radius:14px;border:2px solid rgba(255,215,0,.35);box-shadow:0 8px 24px rgba(0,0,0,.45);}
+  .p3 .img-card{height:16vh;width:62%;}
+  .ai-note{font-size:11px;color:rgba(255,233,196,.55);margin-top:6px;letter-spacing:1px;}
+
+  /* 右上角音乐播放器 */
+  .music-btn{
+    position:fixed;top:14px;right:14px;z-index:20;width:46px;height:46px;border-radius:50%;
+    border:1px solid rgba(255,215,0,.65);background:rgba(0,0,0,.45);color:#ffd700;
+    font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+    box-shadow:0 4px 14px rgba(0,0,0,.35);font-family:inherit;
+  }
+  .music-btn .disc{display:inline-block;line-height:1;}
+  .music-btn.playing{background:rgba(255,215,0,.22);}
+  .music-btn.playing .disc{animation:spin 4s linear infinite;}
+  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<audio id="bgm" src="./bgm.wav" loop preload="auto"></audio>
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="背景音乐"><span class="disc">♪</span></button>
+
+<div class="pages" id="pages">
+
+  <!-- 1 封面 -->
+  <section class="page p1">
+    <div class="banner"></div>
+    <svg class="starSvg" viewBox="0 0 100 100"><polygon points="50,6 61,36 93,36 66,54 76,86 50,68 24,86 34,54 7,36 39,36" fill="#ffd700"/></svg>
+    <div class="tag">纪念中国工农红军长征胜利90周年</div>
+    <h1>长征万里铭初心<br>数字传情续红魂</h1>
+    <div class="divider"></div>
+    <p>—— 红色革命文化科普 H5 ——</p>
+    <img class="img-card" src="./changzheng.jpg" alt="红军长征主视觉">
+    <div class="ai-note">该图片由 AI 生成</div>
+    <button class="btn" onclick="go(1)">开 始 长 征</button>
+  </section>
+
+  <!-- 2 长征是什么 -->
+  <section class="page p2">
+    <h2>什么是长征</h2>
+    <div class="divider"></div>
+    <p>1934年10月，第五次反"围剿"失利后，中央红军主力八万余人被迫实行战略转移，从江西瑞金出发，踏上漫漫征途。</p>
+    <p>红军先后翻越崇山峻岭、跨越江河天险，战胜数倍于己的敌人，行程约<b style="color:#ffd700;">两万五千里</b>。</p>
+    <p style="color:#ffd700;font-size:15px;">1936年10月，三大主力在甘肃会宁胜利会师，长征胜利结束。</p>
+    <svg class="starSvg" viewBox="0 0 100 100" style="margin-top:6px"><polygon points="50,6 61,36 93,36 66,54 76,86 50,68 24,86 34,54 7,36 39,36" fill="#ffd700"/></svg>
+  </section>
+
+  <!-- 3 长征大事记时间轴 -->
+  <section class="page p3">
+    <h2>长征大事记</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">1935.1 遵义会议</div><div class="tl-text">确立以毛泽东为代表的正确领导，红军转危为安。</div></div>
+      <div class="tl-item"><div class="tl-year">1935.1—3 四渡赤水</div><div class="tl-text">毛泽东指挥，以少胜多，彻底摆脱敌军围追堵截。</div></div>
+      <div class="tl-item"><div class="tl-year">1935.5 强渡大渡河·飞夺泸定桥</div><div class="tl-text">红军勇士攀铁索、冒弹雨，突破天险。</div></div>
+      <div class="tl-item"><div class="tl-year">1935.6 翻越夹金山</div><div class="tl-text">克服雪山高寒缺氧，创造人间奇迹。</div></div>
+      <div class="tl-item"><div class="tl-year">1935.8 穿越水草地</div><div class="tl-text">忍饥挨饿，靠团结和意志走出绝境。</div></div>
+      <div class="tl-item"><div class="tl-year">1936.10 会宁会师</div><div class="tl-text">三大主力胜利会师，长征胜利结束。</div></div>
+    </div>
+    <img class="img-card" src="./xueshan.jpg" alt="红军爬雪山">
+    <div class="ai-note">该图片由 AI 生成</div>
+  </section>
+
+  <!-- 4 英雄故事：飞夺泸定桥 -->
+  <section class="page p4">
+    <h2>英雄的故事</h2>
+    <h3>飞夺泸定桥</h3>
+    <div class="divider"></div>
+    <p>1935年5月，大渡河天险横亘在前。红军22名勇士身挂冲锋枪，攀爬十三根铁索，冒着对岸枪林弹雨强行突进。</p>
+    <p>他们用血肉之躯为全军杀开一条生路，创造了战争史上的奇迹。</p>
+    <img class="img-card" src="./ludinqiao.jpg" alt="红军飞夺泸定桥">
+    <div class="ai-note">该图片由 AI 生成</div>
+  </section>
+
+  <!-- 5 精神解读 -->
+  <section class="page p5">
+    <h2>伟大长征精神</h2>
+    <div class="spirit">
+      <div class="sp-item"><b>① 理想信念</b>：把中华民族根本利益看得高于一切，坚定革命必胜信念。</div>
+      <div class="sp-item"><b>② 不怕牺牲</b>：不怕任何艰难险阻，不惜付出一切牺牲。</div>
+      <div class="sp-item"><b>③ 独立自主</b>：实事求是，一切从实际出发。</div>
+      <div class="sp-item"><b>④ 依靠人民</b>：同人民群众生死相依、患难与共。</div>
+    </div>
+  </section>
+
+  <!-- 6 长征诗词 -->
+  <section class="page p6">
+    <h2>七律·长征</h2>
+    <div class="divider"></div>
+    <div class="poem">
+      <p>红军不怕远征难，<br>万水千山只等闲。<br><em>五岭逶迤腾细浪，</em><br><em>乌蒙磅礴走泥丸。</em></p>
+      <p>金沙水拍云崖暖，<br>大渡桥横铁索寒。<br><em>更喜岷山千里雪，</em><br><em>三军过后尽开颜。</em></p>
+    </div>
+    <p style="margin-top:8px;color:#ffd700;font-size:14px;">—— 毛泽东</p>
+  </section>
+
+  <!-- 7 互动问答 -->
+  <section class="page p7">
+    <h2>科普小问答</h2>
+    <div class="q-options" id="quiz1">
+      <p style="font-size:15px;margin-bottom:6px;">Q1 中央红军长征出发时间是？</p>
+      <button onclick="answer(1,this,2)">A. 1931年9月</button>
+      <button onclick="answer(1,this,1)">B. 1934年10月</button>
+      <button onclick="answer(1,this,3)">C. 1937年7月</button>
+    </div>
+    <div class="q-msg" id="msg1"></div>
+    <div class="q-options" id="quiz2" style="margin-top:10px;">
+      <p style="font-size:15px;margin-bottom:6px;">Q2 三大主力胜利会师的地点是？</p>
+      <button onclick="answer(2,this,2)">A. 甘肃会宁</button>
+      <button onclick="answer(2,this,1)">B. 江西瑞金</button>
+      <button onclick="answer(2,this,3)">C. 四川泸定</button>
+    </div>
+    <div class="q-msg" id="msg2"></div>
+  </section>
+
+  <!-- 8 寄语 -->
+  <section class="page p8">
+    <h2>传承与铭记</h2>
+    <div class="divider"></div>
+    <p>每一代人有每一代人的长征。</p>
+    <p>今天的我们，依然需要长征精神指引——<br>坚定信念、艰苦奋斗、不怕困难。</p>
+    <p style="color:#ffd700;">让红色基因代代相传，<br>让长征精神永放光芒。</p>
+    <svg class="starSvg" viewBox="0 0 100 100" style="margin-top:4px"><polygon points="50,6 61,36 93,36 66,54 76,86 50,68 24,86 34,54 7,36 39,36" fill="#ffd700"/></svg>
+  </section>
+
+  <!-- 9 结尾 -->
+  <section class="page p9">
+    <svg class="starSvg" viewBox="0 0 100 100"><polygon points="50,6 61,36 93,36 66,54 76,86 50,68 24,86 34,54 7,36 39,36" fill="#ffd700"/></svg>
+    <h1>铭记历史<br>致敬先烈</h1>
+    <div class="divider"></div>
+    <p>长征精神 · 永放光芒</p>
+    <p style="font-size:14px;color:#ffd700;line-height:2;">
+      罗定职业技术学院 文化体育旅游学院 旅游管理专业<br>
+      参赛作品 · 制作团队：黄舒怡 赵婉珍
+    </p>
+    <p style="font-size:11px;color:rgba(255,233,196,.55);margin-top:6px;">背景音乐由 AI 生成</p>
+    <button class="btn" onclick="go(0)">重 看 一 遍</button>
+  </section>
+</div>
+
+<div class="nav">
+  <button id="prev" onclick="go(cur-1)" disabled>▲</button>
+  <button id="next" onclick="go(cur+1)">▼</button>
+</div>
+<div class="dots" id="dots"></div>
+<div class="foot">纪念中国工农红军长征胜利90周年 · 红色文化科普</div>
+
+<script>
+  var cur = 0, total = 9;             // 页面总数 = section 数量
+  var startY = 0;
+  var pages = document.getElementById('pages');
+  var dots = document.getElementById('dots');
+
+  // 背景音乐播放器
+  var bgm = document.getElementById('bgm');
+  var musicBtn = document.getElementById('musicBtn');
+  function toggleMusic(){
+    if (bgm.paused){ bgm.play().catch(function(){}); musicBtn.classList.add('playing'); }
+    else { bgm.pause(); musicBtn.classList.remove('playing'); }
+  }
+  for (var i = 0; i < total; i++) dots.innerHTML += '<span></span>';
+
+  function go(n){
+    if (n < 0) n = 0;
+    if (n > total - 1) n = total - 1;
+    cur = n;
+    pages.style.transform = 'translateY(-' + (cur * 100) + '%)';
+    var spans = dots.children;
+    for (var i = 0; i < total; i++) spans[i].className = (i === cur) ? 'active' : '';
+    document.getElementById('prev').disabled = (cur === 0);
+    document.getElementById('next').disabled = (cur === total - 1);
+  }
+
+  // 手机触摸滑动翻页
+  document.addEventListener('touchstart', function(e){ startY = e.touches[0].clientY; });
+  document.addEventListener('touchend', function(e){
+    var dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dy) > 60){ if (dy < 0) go(cur + 1); else go(cur - 1); }
+  });
+
+  // 问答：rightIdx 为正确答案在本题按钮中的位置(1起)
+  function answer(quizNo, btn, rightIdx){
+    var box = document.getElementById('quiz' + quizNo);
+    var msg = document.getElementById('msg' + quizNo);
+    var btns = box.querySelectorAll('button');
+    // 本组已作答则忽略
+    if (box.dataset.done) return;
+    box.dataset.done = 1;
+    for (var i = 0; i < btns.length; i++){
+      if (i + 1 === rightIdx) { btns[i].className = 'q-ok'; btns[i].disabled = true; }
+      else { btns[i].className = 'q-no'; btns[i].disabled = true; }
+    }
+    var right = (btn === btns[rightIdx - 1]);
+    msg.textContent = right ? '✔ 回答正确！' : '✘ 有点可惜，正确答案已标出。';
+  }
+</script>
+</body>
+</html>
